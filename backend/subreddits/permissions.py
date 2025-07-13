@@ -1,4 +1,7 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import permissions
+
+from .models import Subreddit
 
 
 class IsSubredditOwner(permissions.BasePermission):
@@ -31,10 +34,14 @@ class IsModeratorOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return request.user and request.user.is_authenticated
+        if not request.user.is_authenticated:
+            return False
 
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
+        subreddit_pk = view.kwargs.get("subreddit_pk")
 
-        return request.user in obj.subreddit.moderators.all()
+        if not subreddit_pk:
+            return False
+
+        subreddit = get_object_or_404(Subreddit, pk=subreddit_pk)
+
+        return subreddit.moderators.filter(pk=request.user.pk).exists()
