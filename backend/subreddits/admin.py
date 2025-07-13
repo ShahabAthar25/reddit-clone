@@ -28,7 +28,10 @@ class SubredditAdmin(admin.ModelAdmin):
     list_filter = ("created_at",)
     search_fields = ("name", "owner__username", "description")
 
-    readonly_fields = ("created_at",)
+    readonly_fields = (
+        "owner",
+        "created_at",
+    )
 
     # Use a more user-friendly widget for the moderators many-to-many field
     filter_horizontal = ("moderators",)
@@ -40,3 +43,22 @@ class SubredditAdmin(admin.ModelAdmin):
         ("Moderation", {"fields": ("moderators",)}),
         ("Metadata", {"fields": ("created_at",)}),
     )
+
+    def get_fieldsets(self, request, obj=None):
+        if obj is None:
+            # This is the 'add' view, show a simplified form
+            return (
+                (None, {"fields": ("name", "description")}),
+                ("Branding", {"fields": ("icon", "banner")}),
+                ("Moderation", {"fields": ("moderators",)}),
+            )
+        return super().get_fieldsets(request, obj)
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.owner = request.user
+
+        super().save_model(request, obj, form, change)
+
+        if not change:
+            obj.moderators.add(request.user)

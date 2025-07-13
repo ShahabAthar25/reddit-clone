@@ -9,7 +9,7 @@ User = get_user_model()
 class RuleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rule
-        fields = ["id", "title", "description", "order", "created_at"]
+        fields = ["id", "title", "description", "created_at"]
 
 
 class SubredditSerializer(serializers.ModelSerializer):
