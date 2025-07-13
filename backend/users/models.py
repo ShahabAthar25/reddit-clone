@@ -9,7 +9,6 @@ class CustomUser(AbstractUser):
         ("admin", "Admin"),
     )
 
-    # We make email required and unique
     email = models.EmailField(unique=True)
     profile_picture = models.ImageField(
         upload_to="profile_pics/", null=True, blank=True
@@ -18,7 +17,8 @@ class CustomUser(AbstractUser):
     karma_points = models.IntegerField(default=0)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="user")
 
-    # No need to add username, password, etc. as they are inherited from AbstractUser.
+    def is_moderator_of(self, subreddit):
+        return self.moderated_subreddits.filter(pk=subreddit.pk).exists()
 
     def __str__(self):
         return self.username

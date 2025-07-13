@@ -27,6 +27,12 @@ class Subreddit(models.Model):
     icon = models.ImageField(upload_to="subreddit_icons/", null=True, blank=True)
     banner = models.ImageField(upload_to="subreddit_banners/", null=True, blank=True)
 
+    members = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name="joined_subreddits",
+        blank=True,  # Allows subreddits with no members
+    )
+
     def __str__(self):
         return self.name
 

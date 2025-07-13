@@ -32,10 +32,12 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
+    "django_filters",
     # Local apps
     "users.apps.UsersConfig",
     "api",
     "subreddits",
+    "posts",
 ]
 
 MIDDLEWARE = [
@@ -63,6 +65,13 @@ REST_FRAMEWORK = {
         "anon": "20/minute",  # Rate limit for anonymous users
         "user": "60/minute",  # Rate limit for authenticated users
     },
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 25,
 }
 
 # JWT Settings
