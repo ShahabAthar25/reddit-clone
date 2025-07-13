@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     # Local apps
     "users.apps.UsersConfig",
     "api",
+    "subreddits",
 ]
 
 MIDDLEWARE = [
